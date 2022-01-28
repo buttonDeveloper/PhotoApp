@@ -30,7 +30,7 @@
         android:textSize="25sp"
         app:layout_constraintEnd_toEndOf="@+id/image_view"
         app:layout_constraintStart_toStartOf="@+id/image_view"
-        app:layout_constraintTop_toTopOf="@+id/image_view" />
+        app:layout_constraintTop_toTopOf="@+id/image_view"/>
 
     <androidx.cardview.widget.CardView
         android:id="@+id/edit_text_card_view"
@@ -64,7 +64,7 @@
     <View
         android:id="@+id/gradient"
         android:layout_width="match_parent"
-        android:layout_height="10dp"
+        android:layout_height="8dp"
         android:background="@drawable/divider_gradient"
         app:layout_constraintBottom_toTopOf="@+id/nav_bar"
         app:layout_constraintEnd_toEndOf="parent"

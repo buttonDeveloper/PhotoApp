@@ -7,10 +7,8 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "GALLERY_ITEM")
 class GalleryItem {
 
-    @PrimaryKey(autoGenerate = true)
-    var id: Int = 0
-
-    @ColumnInfo(name = "photo_uri")
+    @PrimaryKey
+    @ColumnInfo(name = "photo_uri", index = true)
     lateinit var photoUri: String
 
 }

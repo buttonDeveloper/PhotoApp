@@ -125,26 +125,26 @@ class MainActivity : AppCompatActivity(), OnDeleteModeListener, OnDeletePhotosLi
         deleteList = list
     }
 
-    class DiffCallback: DiffUtil.Callback() {
-
-        var oldList = ArrayList<GalleryItem>()
-        var newList = ArrayList<GalleryItem>()
-
-        override fun getOldListSize(): Int {
-            return oldList.size
-        }
-
-        override fun getNewListSize(): Int {
-            return newList.size
-        }
-
-        override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-            return oldList[oldItemPosition].id == newList[newItemPosition].id
-        }
-
-        override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-            return oldList[oldItemPosition].photoUri == newList[newItemPosition].photoUri
-        }
-
-    }
+//    class DiffCallback: DiffUtil.Callback() {
+//
+//        var oldList = ArrayList<GalleryItem>()
+//        var newList = ArrayList<GalleryItem>()
+//
+//        override fun getOldListSize(): Int {
+//            return oldList.size
+//        }
+//
+//        override fun getNewListSize(): Int {
+//            return newList.size
+//        }
+//
+//        override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+//            return oldList[oldItemPosition].id == newList[newItemPosition].id
+//        }
+//
+//        override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+//            return oldList[oldItemPosition].photoUri == newList[newItemPosition].photoUri
+//        }
+//
+//    }
 }
