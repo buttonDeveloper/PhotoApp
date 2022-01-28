@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">PhotoApp</string>
+    <string name="street_name">Название локации</string>
+    <string name="delete">Удалить</string>
+    <string name="section">Раздел</string>
+</resources>

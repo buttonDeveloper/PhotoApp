@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/root"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/gallery_card_background"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="45dp"
+        android:elevation="10dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="15dp"
+            android:background="@drawable/gallery_card_inside_background">
+
+            <ImageView
+                android:id="@+id/plus"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_margin="5dp"
+                android:padding="5dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/photo_card_plus" />
+
+            <EditText
+                android:id="@+id/edit_text_location"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:background="@null"
+                android:fontFamily="@font/ubuntu"
+                android:hint="@string/street_name"
+                android:imeOptions="actionDone"
+                android:inputType="text"
+                android:singleLine="true"
+                android:textCursorDrawable="@null"
+                android:textSize="20sp"
+                app:layout_constraintBottom_toBottomOf="@+id/plus"
+                app:layout_constraintEnd_toStartOf="@+id/plus"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_view"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/plus"
+                android:clipToPadding="false"
+                android:overScrollMode="never"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </FrameLayout>
+
+    <ViewStub
+        android:id="@+id/delete_button"
+        android:layout_width="250dp"
+        android:layout_height="100dp"
+        android:layout_gravity="bottom|center"
+        android:inflatedId="@+id/delete_button_inflated"
+        android:layout="@layout/stub_delete_layout"/>
+
+</FrameLayout>
