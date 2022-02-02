@@ -4,12 +4,12 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "SECTION_TABLE")
+@Entity(tableName = "SECTION")
 class Section {
 
     @PrimaryKey
     var id: Int = 1
 
-    @ColumnInfo(name = "section")
-    var section: String = " "
+    @ColumnInfo(name = "section_name")
+    var section: String = ""
 }

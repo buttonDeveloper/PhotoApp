@@ -5,6 +5,7 @@
       <map>
         <entry key="..\:/Users/LENOVO/AndroidStudioProjects/PhotoApp/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.22467532467532467" />
         <entry key="..\:/Users/LENOVO/AndroidStudioProjects/PhotoApp/app/src/main/res/drawable/center_icon.xml" value="0.22467532467532467" />
+        <entry key="..\:/Users/LENOVO/AndroidStudioProjects/PhotoApp/app/src/main/res/drawable/custom_button.xml" value="0.127" />
         <entry key="..\:/Users/LENOVO/AndroidStudioProjects/PhotoApp/app/src/main/res/drawable/delete_button.xml" value="0.22467532467532467" />
         <entry key="..\:/Users/LENOVO/AndroidStudioProjects/PhotoApp/app/src/main/res/drawable/divider_gradient.xml" value="0.22763157894736843" />
         <entry key="..\:/Users/LENOVO/AndroidStudioProjects/PhotoApp/app/src/main/res/drawable/edit_text_background.xml" value="0.22467532467532467" />
@@ -13,13 +14,16 @@
         <entry key="..\:/Users/LENOVO/AndroidStudioProjects/PhotoApp/app/src/main/res/drawable/gallery_card_shadow.xml" value="0.12324561403508771" />
         <entry key="..\:/Users/LENOVO/AndroidStudioProjects/PhotoApp/app/src/main/res/drawable/income1_icon.xml" value="0.14635416666666667" />
         <entry key="..\:/Users/LENOVO/AndroidStudioProjects/PhotoApp/app/src/main/res/drawable/income_icon.xml" value="0.14635416666666667" />
+        <entry key="..\:/Users/LENOVO/AndroidStudioProjects/PhotoApp/app/src/main/res/drawable/location_icon.xml" value="0.1165" />
         <entry key="..\:/Users/LENOVO/AndroidStudioProjects/PhotoApp/app/src/main/res/drawable/moodboard_icon.xml" value="0.22467532467532467" />
         <entry key="..\:/Users/LENOVO/AndroidStudioProjects/PhotoApp/app/src/main/res/drawable/photo_card_background.xml" value="0.22763157894736843" />
         <entry key="..\:/Users/LENOVO/AndroidStudioProjects/PhotoApp/app/src/main/res/drawable/photo_delete_off.xml" value="0.22467532467532467" />
+        <entry key="..\:/Users/LENOVO/AndroidStudioProjects/PhotoApp/app/src/main/res/drawable/photo_delete_on.xml" value="0.127" />
         <entry key="..\:/Users/LENOVO/AndroidStudioProjects/PhotoApp/app/src/main/res/drawable/setting_icon.xml" value="0.22467532467532467" />
         <entry key="..\:/Users/LENOVO/AndroidStudioProjects/PhotoApp/app/src/main/res/drawable/shadow_background.xml" value="0.22467532467532467" />
+        <entry key="..\:/Users/LENOVO/AndroidStudioProjects/PhotoApp/app/src/main/res/drawable/smear.xml" value="0.12324561403508771" />
         <entry key="..\:/Users/LENOVO/AndroidStudioProjects/PhotoApp/app/src/main/res/layout/activity_full_screen_image.xml" value="0.21403508771929824" />
-        <entry key="..\:/Users/LENOVO/AndroidStudioProjects/PhotoApp/app/src/main/res/layout/activity_main.xml" value="0.25" />
+        <entry key="..\:/Users/LENOVO/AndroidStudioProjects/PhotoApp/app/src/main/res/layout/activity_main.xml" value="0.4" />
         <entry key="..\:/Users/LENOVO/AndroidStudioProjects/PhotoApp/app/src/main/res/layout/full_screen_image.xml" value="0.1" />
         <entry key="..\:/Users/LENOVO/AndroidStudioProjects/PhotoApp/app/src/main/res/layout/gallery_card_layout.xml" value="0.2" />
         <entry key="..\:/Users/LENOVO/AndroidStudioProjects/PhotoApp/app/src/main/res/layout/photo_card.xml" value="0.21403508771929824" />
@@ -27,6 +31,7 @@
         <entry key="..\:/Users/LENOVO/AndroidStudioProjects/PhotoApp/app/src/main/res/layout/stub_delete_layout.xml" value="0.2" />
         <entry key="..\:/Users/LENOVO/AndroidStudioProjects/PhotoApp/app/src/main/res/layout/stub_icon_layout.xml" value="0.10964912280701754" />
         <entry key="..\:/Users/LENOVO/AndroidStudioProjects/PhotoApp/app/src/main/res/layout/view_stub_layout.xml" value="0.21403508771929824" />
+        <entry key="..\:/Users/LENOVO/AndroidStudioProjects/PhotoApp/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.1165" />
       </map>
     </option>
   </component>

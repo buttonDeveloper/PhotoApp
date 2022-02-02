@@ -1,125 +1,91 @@
 package com.example.photoapp
 
+import android.annotation.SuppressLint
 import android.content.Context
-import android.content.Intent
-import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.LinearLayout
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.DataSource
-import com.bumptech.glide.load.engine.GlideException
-import com.bumptech.glide.request.RequestListener
-import com.bumptech.glide.request.target.Target
 import com.example.photoapp.databinding.PhotoCardBinding
 import com.example.photoapp.room.GalleryItem
-import kotlinx.coroutines.*
-import timber.log.Timber
 
-class GalleryAdapter(var list: List<GalleryItem>, var isDeleteMode: Boolean, private val modeListener: OnDeleteModeListener, private val deleteListener: OnDeletePhotosListener) : RecyclerView.Adapter<GalleryAdapter.ViewHolder>() {
 
-    private val deleteList = ArrayList<GalleryItem>()
+class GalleryAdapter(var list: ArrayList<GalleryItem>, var isDeleteMode: Boolean, private val deleteModeListener: OnDeleteModeListener, private val onPhotoClickListener: OnPhotoClickListener) : RecyclerView.Adapter<GalleryAdapter.ViewHolder>() {
 
-    val listener = object : RequestListener<Drawable> {
-        override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
-            Timber.d("e = $e")
-            return false
-        }
+    val deleteList = ArrayList<GalleryItem>()
+    private val deleteIconOff = getDrawable(App.context(), R.drawable.photo_delete_off)
+    private val deleteIconOn = getDrawable(App.context(), R.drawable.photo_delete_on)
 
-        override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
-            Timber.d("resource = $resource")
-            return false
-        }
-
-    }
-
+    @SuppressLint("ClickableViewAccessibility")
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding = PhotoCardBinding.bind(LayoutInflater.from(parent.context).inflate(R.layout.photo_card, parent, false))
-        return ViewHolder(binding)
+        return ViewHolder(binding).apply {
+            val listener = object : TouchCallback {
+                override fun onLongClick() {
+                    deleteModeListener.onDeleteMode(true)
+                }
+
+                override fun onClick() {
+                    if (isDeleteMode) {
+                        val model = list[bindingAdapterPosition]
+                        val isSelected = deleteList.contains(model)
+                        val toSelect = !isSelected
+                        setDeleteIcon(binding.deleteIcon, toSelect)
+                        if (toSelect) deleteList.add(model) else deleteList.remove(model)
+                        deleteModeListener.deletePhotosList(deleteList)
+                    } else
+                        onPhotoClickListener.onPhotoClick(Uri.parse(list[bindingAdapterPosition].photoUri))
+                }
+            }
+            binding.photo.setOnTouchListener(ItemTouchListener(listener, isDeleteMode))
+        }
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        if (!isDeleteMode) {
-            Glide.with(App.context()).load(Uri.parse(list[position].photoUri)).centerCrop().into(holder.binding.photo)
-            setClickBehavior(holder.binding.photo, Uri.parse(list[position].photoUri))
-        } else {
-            Glide.with(App.context()).load(Uri.parse(list[position].photoUri)).centerCrop().into(holder.binding.photo)
-            holder.binding.viewStub.inflate().apply {
-                var isSelected = false
-                val icon = findViewById<LinearLayout>(R.id.view_stub_inflated).findViewById<ImageView>(R.id.delete_icon)
-                setOnClickListener {
-                    isSelected = !isSelected
-                    icon.setImageDrawable(if (!isSelected) getDrawable(context, R.drawable.photo_delete_off)
-                    else getDrawable(context, R.drawable.photo_delete_on))
-                    if (isSelected) {
-//                        Timber.d("add to deleteList = ${list[position]}")
-                        deleteList.add(list[position])
-                    } else {
-                        deleteList.remove(list[position])
-                    }
-                    deleteListener.deletePhotosList(deleteList)
-                }
-            }
-        }
+        Glide.with(App.context()).load(Uri.parse(list[position].photoUri)).centerCrop().into(holder.binding.photo)
+        if (!isDeleteMode) holder.binding.deleteIcon.visibility = View.INVISIBLE else holder.binding.deleteIcon.visibility = View.VISIBLE
     }
 
     override fun getItemCount() = list.size
 
-    private fun setClickBehavior(v: View, uri: Uri) {
-        var isLongClick = false
-        val runnable = Runnable {
-            this.isDeleteMode = true
-            for (i in 0..list.size) this.notifyItemChanged(i)
-            modeListener.onDeleteMode(isDeleteMode)
-//            Timber.d("run")
-            isLongClick = true
-            vibrate()
+    private fun setDeleteIcon(v: ImageView, isSelected: Boolean) {
+        v.setImageDrawable(if (!isSelected) deleteIconOff else deleteIconOn)
+        if (isSelected) v.animate().rotation(180F).start() else v.animate().rotation(360F).start()
+    }
+
+    class DiffUtilCallback(var oldList: ArrayList<GalleryItem>, var newList: List<GalleryItem>) : DiffUtil.Callback() {
+
+        override fun getOldListSize() = oldList.size
+
+        override fun getNewListSize() = newList.size
+
+        override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+            return oldList[oldItemPosition] == newList[newItemPosition]
         }
-        v.apply {
-            setOnTouchListener { v, event ->
-//                Timber.d("event.action = ${event.action}")
-                if (event.action == MotionEvent.ACTION_DOWN) {
-                    Timber.d("down")
-                    handler.postDelayed(runnable, 3000)
-                    isLongClick = false
-                    return@setOnTouchListener false
-                } else if (event.action == MotionEvent.ACTION_UP) {
-                    if (isLongClick) return@setOnTouchListener true
-//                    Timber.d("up")
-                    handler.removeCallbacks(runnable)
-                    performClick()
-                    return@setOnTouchListener false
-                } else if (event.action == MotionEvent.ACTION_CANCEL) {
-                    handler.removeCallbacks(runnable)
-                    return@setOnTouchListener false
-                }
-                false
-            }
 
-            setOnClickListener {
-                val intent = Intent(App.context(), FullScreenImage()::class.java)
-                intent.putExtra("uri", uri.toString())
-                intent.action = Intent.ACTION_OPEN_DOCUMENT
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                App.context().startActivity(intent)
-
-            }
+        override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+            return oldList[oldItemPosition].photoUri == newList[newItemPosition].photoUri
         }
     }
 
-    private fun vibrate() {
-        (App.context().getSystemService(Context.VIBRATOR_SERVICE) as Vibrator).apply {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) vibrate(VibrationEffect.createOneShot(100, VibrationEffect.DEFAULT_AMPLITUDE))
-            else vibrate(100)
-        }
+    fun updateList(newList: List<GalleryItem>) {
+        val diffCallback = DiffUtilCallback(this.list, newList)
+        val diffResult = DiffUtil.calculateDiff(diffCallback)
+        this.list = ArrayList(newList)
+        diffResult.dispatchUpdatesTo(this)
     }
+
 
     class ViewHolder(val binding: PhotoCardBinding) : RecyclerView.ViewHolder(binding.root)
 
-
 }
+
+
+

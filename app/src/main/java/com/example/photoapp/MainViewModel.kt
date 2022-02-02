@@ -6,8 +6,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import com.example.photoapp.room.GalleryItem
-import com.example.photoapp.room.Location
-import com.example.photoapp.room.Section
 import timber.log.Timber
 
 class MainViewModel : ViewModel() {
@@ -17,58 +15,42 @@ class MainViewModel : ViewModel() {
 
     private val photosObserver = Observer<List<GalleryItem>> { photosLiveData.value = it }
 
+    private val repository = Repository()
+
     init {
         Timber.d("init")
-        Repository.apply {
-            getGalleryItem().observeForever(photosObserver)
-        }
+        repository.listPhotosLiveData().observeForever(photosObserver)
     }
 
     fun observeModel() {
-        Repository.loadInitList(object : OnInitListLoadedCallback {
-            override fun onInitListLoaded(list: List<GalleryItem>) {
-                photosLiveData.value = list
-            }
-        })
+        repository.loadInitList {
+            photosLiveData.value = it
+        }
     }
 
-    suspend fun getSection(): Section {
-        return Repository.getSection()
-    }
+    suspend fun getSection() = repository.getSection()
 
     fun updateSection(section: String) {
-        val i = Section().apply {
-            this.section = section
-        }
-        Repository.updateSection(i)
+        repository.updateSection(section)
     }
 
-    suspend fun getLocation(): Location {
-        return Repository.getLocation()
-    }
+    suspend fun getLocation() = repository.getLocation()
 
     fun updateLocation(location: String) {
-        val i = Location().apply {
-            this.location = location
-        }
-        Repository.updateLocation(i)
+        repository.updateLocation(location)
     }
 
     fun savePhotos(listPhotos: List<Uri>) {
-        val list = ArrayList<GalleryItem>()
-        for (i in 0..listPhotos.size - 1) {
-            val item = GalleryItem()
-            item.photoUri = listPhotos[i].toString()
-            list.add(item)
-        }
-        Repository.savePhotos(list)
+        repository.savePhotos(listPhotos)
     }
 
     fun deletePhotos(list: ArrayList<GalleryItem>) {
-        Repository.apply {
-            deletePhotos(list)
-        }
+        repository.deletePhotos(list)
     }
 
-
+    override fun onCleared() {
+        super.onCleared()
+        repository.listPhotosLiveData().removeObserver(photosObserver)
+        repository.destroy()
+    }
 }

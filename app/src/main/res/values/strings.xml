@@ -3,4 +3,5 @@
     <string name="street_name">Название локации</string>
     <string name="delete">Удалить</string>
     <string name="section">Раздел</string>
+    <string name="photo_unavailable">Фото недоступно</string>
 </resources>

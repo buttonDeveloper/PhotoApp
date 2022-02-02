@@ -6,4 +6,6 @@ import androidx.room.RoomDatabase
 @Database(entities = [Section::class, Location::class, GalleryItem::class], version = 1)
 abstract class Database: RoomDatabase() {
     abstract fun galleryDao() : GalleryDao
+    abstract fun locationDao(): LocationDao
+    abstract fun sectionDao(): SectionDao
 }
