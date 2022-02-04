@@ -13,10 +13,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
-import com.example.photoapp.*
 import com.example.photoapp.databinding.ActivityMainBinding
 import com.example.photoapp.room.GalleryItem
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 
 class MainActivity : AppCompatActivity(), OnDeleteModeListener, OnPhotoClickListener {
@@ -39,32 +39,32 @@ class MainActivity : AppCompatActivity(), OnDeleteModeListener, OnPhotoClickList
         lifecycleScope.launch {
             binding.apply {
                 editTextSection.setText(model.getSection()?.section)
-                includeGalleryCard.editTextLocation.setText(model.getLocation()?.location)
+                galleryCard.editTextLocation.setText(model.getLocation()?.location)
             }
         }
 
         //set editTexts listeners
         binding.apply {
             editTextSection.onSubmit { escapeEdition(editTextSection) }
-            includeGalleryCard.editTextLocation.onSubmit { escapeEdition(includeGalleryCard.editTextLocation) }
+            galleryCard.editTextLocation.onSubmit { escapeEdition(galleryCard.editTextLocation) }
         }
 
         //listener for enter gallery
-        binding.includeGalleryCard.plus.setOnClickListener {
+        binding.galleryCard.plus.setOnClickListener {
             if (!isDeleteMode) getContent.launch("image/*")
         }
 
         //init rv
-        binding.includeGalleryCard.recyclerView.apply {
-            layoutManager = GridLayoutManager(context, 3, GridLayoutManager.VERTICAL, isDeleteMode)
+        binding.galleryCard.recyclerView.apply {
+            layoutManager = GridLayoutManager(context, 3, GridLayoutManager.VERTICAL, false)
             adapter = this@MainActivity.adapter
         }
 
         //observe photos list
         model.getPhotosLiveData().observe(this) {
-//            adapter.updateList(it as ArrayList<GalleryItem>)
-            adapter.list = it as ArrayList<GalleryItem>
-            adapter.notifyDataSetChanged()
+            adapter.updateList(it as ArrayList<GalleryItem>)
+//            adapter.list = it as ArrayList<GalleryItem>
+//            adapter.notifyDataSetChanged()
         }
     }
 
@@ -76,17 +76,19 @@ class MainActivity : AppCompatActivity(), OnDeleteModeListener, OnPhotoClickList
     private fun setDeleteMode(isDeleteMode: Boolean) {
         this@MainActivity.isDeleteMode = isDeleteMode
         if (isDeleteMode && deleteButton == null) {
-            deleteButton = binding.includeGalleryCard.deleteButton
+            deleteButton = binding.galleryCard.deleteButton
             deleteButton?.apply {
                 visibility = View.VISIBLE
                 translationZ = 30F
                 setOnClickListener {
-                    if (isDeleteMode) {
-                        binding.includeGalleryCard.recyclerView.adapter = adapter.apply { this.isDeleteMode = false }
+                    Timber.d("delete click")
+                        binding.galleryCard.recyclerView.adapter = adapter.apply {
+                            this.isDeleteMode = false
+                            this.deleteList.clear()
+                        }
                         this@MainActivity.isDeleteMode = false
                         if (deleteList.isNotEmpty()) model.deletePhotos(deleteList)
-                        deleteButton?.visibility = View.GONE
-                    }
+                        this.visibility = View.GONE
                 }
             }
         } else deleteButton?.visibility = View.VISIBLE
@@ -95,7 +97,7 @@ class MainActivity : AppCompatActivity(), OnDeleteModeListener, OnPhotoClickList
     private fun escapeEdition(v: EditText) {
         when (v) {
             binding.editTextSection -> model.updateSection(v.text.toString())
-            binding.includeGalleryCard.editTextLocation -> model.updateLocation(v.text.toString())
+            binding.galleryCard.editTextLocation -> model.updateLocation(v.text.toString())
         }
         hideKeyboard()
         v.clearFocus()
@@ -103,33 +105,37 @@ class MainActivity : AppCompatActivity(), OnDeleteModeListener, OnPhotoClickList
 
     private fun hideKeyboard() {
         this.currentFocus?.let { view ->
-            val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
-            imm?.hideSoftInputFromWindow(view.windowToken, 0)
+            (getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager)?.hideSoftInputFromWindow(view.windowToken, 0)
         }
     }
 
     override fun onBackPressed() {
         if (this@MainActivity.isDeleteMode) {
-            deleteList.clear()
-            this.isDeleteMode = false
+            this@MainActivity.deleteList.clear()
+            this@MainActivity.isDeleteMode = false
             deleteButton?.visibility = View.GONE
-            adapter.apply {
-                deleteList.clear()
+            binding.galleryCard.recyclerView.adapter = adapter.apply {
                 isDeleteMode = false
-                notifyDataSetChanged()
+                deleteList.clear()
             }
         } else super.onBackPressed()
     }
 
     override fun onDeleteMode(isDeleteMode: Boolean) {
         this@MainActivity.isDeleteMode = isDeleteMode
-        adapter.isDeleteMode = isDeleteMode
-        adapter.notifyDataSetChanged()
+        binding.galleryCard.recyclerView.adapter = adapter.apply { this.isDeleteMode = isDeleteMode }
         setDeleteMode(isDeleteMode)
     }
 
-    override fun deletePhotosList(list: ArrayList<GalleryItem>) {
-        deleteList = list
+    override fun addToDeleteList(item: GalleryItem) {
+        deleteList.add(item)
+        Timber.d("deleteList = $deleteList")
+    }
+
+    override fun removeFromDeleteList(item: GalleryItem) {
+        if(!deleteList.contains(item)) return
+        else deleteList.remove(item)
+        Timber.d("deleteList = $deleteList")
     }
 
     override fun onPhotoClick(uri: Uri) {

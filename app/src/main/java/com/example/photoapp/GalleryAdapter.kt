@@ -1,11 +1,7 @@
 package com.example.photoapp
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.net.Uri
-import android.os.Build
-import android.os.VibrationEffect
-import android.os.Vibrator
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,9 +11,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.photoapp.databinding.PhotoCardBinding
 import com.example.photoapp.room.GalleryItem
+import timber.log.Timber
 
 
-class GalleryAdapter(var list: ArrayList<GalleryItem>, var isDeleteMode: Boolean, private val deleteModeListener: OnDeleteModeListener, private val onPhotoClickListener: OnPhotoClickListener) : RecyclerView.Adapter<GalleryAdapter.ViewHolder>() {
+class GalleryAdapter(var list: ArrayList<GalleryItem>, var isDeleteMode: Boolean, private val deleteModeListener: OnDeleteModeListener,
+                     private val onPhotoClickListener: OnPhotoClickListener) : RecyclerView.Adapter<GalleryAdapter.ViewHolder>() {
 
     val deleteList = ArrayList<GalleryItem>()
     private val deleteIconOff = getDrawable(App.context(), R.drawable.photo_delete_off)
@@ -25,6 +23,7 @@ class GalleryAdapter(var list: ArrayList<GalleryItem>, var isDeleteMode: Boolean
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        Timber.d("onCreateViewHolder isDeleteMode = $isDeleteMode")
         val binding = PhotoCardBinding.bind(LayoutInflater.from(parent.context).inflate(R.layout.photo_card, parent, false))
         return ViewHolder(binding).apply {
             val listener = object : TouchCallback {
@@ -38,8 +37,8 @@ class GalleryAdapter(var list: ArrayList<GalleryItem>, var isDeleteMode: Boolean
                         val isSelected = deleteList.contains(model)
                         val toSelect = !isSelected
                         setDeleteIcon(binding.deleteIcon, toSelect)
-                        if (toSelect) deleteList.add(model) else deleteList.remove(model)
-                        deleteModeListener.deletePhotosList(deleteList)
+                        if(toSelect) deleteList.add(model) else deleteList.remove(model)
+                        if(toSelect) deleteModeListener.addToDeleteList(model) else deleteModeListener.removeFromDeleteList(model)
                     } else
                         onPhotoClickListener.onPhotoClick(Uri.parse(list[bindingAdapterPosition].photoUri))
                 }
@@ -67,11 +66,11 @@ class GalleryAdapter(var list: ArrayList<GalleryItem>, var isDeleteMode: Boolean
         override fun getNewListSize() = newList.size
 
         override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-            return oldList[oldItemPosition] == newList[newItemPosition]
+            return oldList[oldItemPosition].photoUri == newList[newItemPosition].photoUri
         }
 
         override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-            return oldList[oldItemPosition].photoUri == newList[newItemPosition].photoUri
+            return oldList[oldItemPosition] == newList[newItemPosition]
         }
     }
 

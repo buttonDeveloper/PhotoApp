@@ -9,6 +9,10 @@ import android.os.Handler
 
 class ItemTouchListener(private val callback: TouchCallback, private val isDeleteMode: Boolean) : View.OnTouchListener {
 
+    init {
+        Timber.d("ItemTouchListener isDeleteMode = $isDeleteMode")
+    }
+
     private val handler = Handler(Looper.getMainLooper())
     private val runnable = Runnable {
         Timber.d("Runnable")

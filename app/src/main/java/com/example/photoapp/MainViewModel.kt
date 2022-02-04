@@ -6,7 +6,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import com.example.photoapp.room.GalleryItem
-import timber.log.Timber
 
 class MainViewModel : ViewModel() {
 
@@ -18,7 +17,6 @@ class MainViewModel : ViewModel() {
     private val repository = Repository()
 
     init {
-        Timber.d("init")
         repository.listPhotosLiveData().observeForever(photosObserver)
     }
 

@@ -29,14 +29,14 @@ class Repository {
                 list.add(item)
             }
             DB.save(list)
-            listPhotosLiveData.postValue(getPhotos()!!)
+            listPhotosLiveData.postValue(getPhotos())
         }
     }
 
     fun deletePhotos(list: ArrayList<GalleryItem>) {
         scope.launch {
             DB.delete(list)
-            listPhotosLiveData.postValue(getPhotos()!!)
+            listPhotosLiveData.postValue(getPhotos())
         }
     }
 
