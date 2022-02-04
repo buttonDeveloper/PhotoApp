@@ -23,9 +23,7 @@ class MainActivity : AppCompatActivity(), OnDeleteModeListener, OnPhotoClickList
 
     private lateinit var model: MainViewModel
     private lateinit var binding: ActivityMainBinding
-    private val adapter = GalleryAdapter(ArrayList(), false, this, this)
-    private var deleteList = ArrayList<GalleryItem>()
-    private var isDeleteMode = false
+    private val adapter = GalleryAdapter(ArrayList(), this, this)
     private var deleteButton: TextView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,7 +49,7 @@ class MainActivity : AppCompatActivity(), OnDeleteModeListener, OnPhotoClickList
 
         //listener for enter gallery
         binding.galleryCard.plus.setOnClickListener {
-            if (!isDeleteMode) getContent.launch("image/*")
+            if (!adapter.isDeleteMode) getContent.launch("image/*")
         }
 
         //init rv
@@ -63,8 +61,6 @@ class MainActivity : AppCompatActivity(), OnDeleteModeListener, OnPhotoClickList
         //observe photos list
         model.getPhotosLiveData().observe(this) {
             adapter.updateList(it as ArrayList<GalleryItem>)
-//            adapter.list = it as ArrayList<GalleryItem>
-//            adapter.notifyDataSetChanged()
         }
     }
 
@@ -74,21 +70,15 @@ class MainActivity : AppCompatActivity(), OnDeleteModeListener, OnPhotoClickList
     }
 
     private fun setDeleteMode(isDeleteMode: Boolean) {
-        this@MainActivity.isDeleteMode = isDeleteMode
         if (isDeleteMode && deleteButton == null) {
             deleteButton = binding.galleryCard.deleteButton
             deleteButton?.apply {
                 visibility = View.VISIBLE
                 translationZ = 30F
                 setOnClickListener {
-                    Timber.d("delete click")
-                        binding.galleryCard.recyclerView.adapter = adapter.apply {
-                            this.isDeleteMode = false
-                            this.deleteList.clear()
-                        }
-                        this@MainActivity.isDeleteMode = false
-                        if (deleteList.isNotEmpty()) model.deletePhotos(deleteList)
-                        this.visibility = View.GONE
+                    model.deletePhotos(adapter.deleteList)
+                    binding.galleryCard.recyclerView.adapter = adapter.apply { this.isDeleteMode = false }
+                    this.visibility = View.GONE
                 }
             }
         } else deleteButton?.visibility = View.VISIBLE
@@ -110,32 +100,14 @@ class MainActivity : AppCompatActivity(), OnDeleteModeListener, OnPhotoClickList
     }
 
     override fun onBackPressed() {
-        if (this@MainActivity.isDeleteMode) {
-            this@MainActivity.deleteList.clear()
-            this@MainActivity.isDeleteMode = false
+        if (adapter.isDeleteMode) {
             deleteButton?.visibility = View.GONE
-            binding.galleryCard.recyclerView.adapter = adapter.apply {
-                isDeleteMode = false
-                deleteList.clear()
-            }
+            binding.galleryCard.recyclerView.adapter = adapter.apply { isDeleteMode = false }
         } else super.onBackPressed()
     }
 
     override fun onDeleteMode(isDeleteMode: Boolean) {
-        this@MainActivity.isDeleteMode = isDeleteMode
-        binding.galleryCard.recyclerView.adapter = adapter.apply { this.isDeleteMode = isDeleteMode }
         setDeleteMode(isDeleteMode)
-    }
-
-    override fun addToDeleteList(item: GalleryItem) {
-        deleteList.add(item)
-        Timber.d("deleteList = $deleteList")
-    }
-
-    override fun removeFromDeleteList(item: GalleryItem) {
-        if(!deleteList.contains(item)) return
-        else deleteList.remove(item)
-        Timber.d("deleteList = $deleteList")
     }
 
     override fun onPhotoClick(uri: Uri) {

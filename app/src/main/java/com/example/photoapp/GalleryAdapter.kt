@@ -14,10 +14,18 @@ import com.example.photoapp.room.GalleryItem
 import timber.log.Timber
 
 
-class GalleryAdapter(var list: ArrayList<GalleryItem>, var isDeleteMode: Boolean, private val deleteModeListener: OnDeleteModeListener,
+class GalleryAdapter(var list: ArrayList<GalleryItem>, private val deleteModeListener: OnDeleteModeListener,
                      private val onPhotoClickListener: OnPhotoClickListener) : RecyclerView.Adapter<GalleryAdapter.ViewHolder>() {
 
     val deleteList = ArrayList<GalleryItem>()
+    var isDeleteMode = false
+    set(value) {
+        if(value) {
+            deleteList.clear()
+            notifyDataSetChanged()
+        }
+        field = value
+    }
     private val deleteIconOff = getDrawable(App.context(), R.drawable.photo_delete_off)
     private val deleteIconOn = getDrawable(App.context(), R.drawable.photo_delete_on)
 
@@ -29,6 +37,7 @@ class GalleryAdapter(var list: ArrayList<GalleryItem>, var isDeleteMode: Boolean
             val listener = object : TouchCallback {
                 override fun onLongClick() {
                     deleteModeListener.onDeleteMode(true)
+                    this@GalleryAdapter.isDeleteMode = true
                 }
 
                 override fun onClick() {
@@ -38,7 +47,6 @@ class GalleryAdapter(var list: ArrayList<GalleryItem>, var isDeleteMode: Boolean
                         val toSelect = !isSelected
                         setDeleteIcon(binding.deleteIcon, toSelect)
                         if(toSelect) deleteList.add(model) else deleteList.remove(model)
-                        if(toSelect) deleteModeListener.addToDeleteList(model) else deleteModeListener.removeFromDeleteList(model)
                     } else
                         onPhotoClickListener.onPhotoClick(Uri.parse(list[bindingAdapterPosition].photoUri))
                 }
