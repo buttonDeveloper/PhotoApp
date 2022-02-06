@@ -1,4 +1,4 @@
-package com.example.photoapp
+package com.example.photoapp.listener
 
 interface TouchCallback {
     fun onLongClick()

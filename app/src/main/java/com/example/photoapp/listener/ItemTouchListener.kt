@@ -1,4 +1,4 @@
-package com.example.photoapp
+package com.example.photoapp.listener
 
 import android.content.Context
 import android.os.*
@@ -6,6 +6,7 @@ import android.view.MotionEvent
 import android.view.View
 import timber.log.Timber
 import android.os.Handler
+import com.example.photoapp.App
 
 class ItemTouchListener(private val callback: TouchCallback, private val isDeleteMode: Boolean) : View.OnTouchListener {
 

@@ -1,4 +1,4 @@
-package com.example.photoapp
+package com.example.photoapp.view
 
 import android.annotation.SuppressLint
 import android.net.Uri
@@ -9,7 +9,14 @@ import android.widget.ImageView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.example.photoapp.App
+import com.example.photoapp.R
 import com.example.photoapp.databinding.PhotoCardBinding
+import com.example.photoapp.getDrawable
+import com.example.photoapp.listener.ItemTouchListener
+import com.example.photoapp.listener.OnDeleteModeListener
+import com.example.photoapp.listener.OnPhotoClickListener
+import com.example.photoapp.listener.TouchCallback
 import com.example.photoapp.room.GalleryItem
 import timber.log.Timber
 

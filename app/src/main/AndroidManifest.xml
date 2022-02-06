@@ -16,7 +16,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.PhotoApp">
         <activity
-            android:name=".MainActivity"
+            android:name=".view.MainActivity"
             android:screenOrientation="portrait"
             android:exported="true"
             android:windowSoftInputMode="adjustPan">
@@ -26,7 +26,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".FullScreenImageActivity"
+            android:name=".view.FullScreenImageActivity"
             android:screenOrientation="portrait"
             android:exported="true">
         </activity>

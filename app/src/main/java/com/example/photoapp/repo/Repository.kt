@@ -1,8 +1,9 @@
-package com.example.photoapp
+package com.example.photoapp.repo
 
 import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.example.photoapp.DB
 import com.example.photoapp.room.GalleryItem
 import com.example.photoapp.room.Location
 import com.example.photoapp.room.Section

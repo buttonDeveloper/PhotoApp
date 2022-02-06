@@ -1,4 +1,4 @@
-package com.example.photoapp
+package com.example.photoapp.view
 
 import android.net.Uri
 import android.os.Bundle
