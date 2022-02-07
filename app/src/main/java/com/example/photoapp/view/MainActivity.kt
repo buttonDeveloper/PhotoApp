@@ -72,21 +72,6 @@ class MainActivity : AppCompatActivity(), OnDeleteModeListener, OnPhotoClickList
         model.savePhotos(it)
     }
 
-    private fun setDeleteMode(isDeleteMode: Boolean) {
-        if (isDeleteMode && deleteButton == null) {
-            deleteButton = binding.galleryCard.deleteButton
-            deleteButton?.apply {
-                visibility = View.VISIBLE
-                translationZ = 30F
-                setOnClickListener {
-                    model.deletePhotos(adapter.deleteList)
-                    binding.galleryCard.recyclerView.adapter = adapter.apply { this.isDeleteMode = false }
-                    this.visibility = View.GONE
-                }
-            }
-        } else deleteButton?.visibility = View.VISIBLE
-    }
-
     private fun escapeEdition(v: EditText) {
         when (v) {
             binding.editTextSection -> model.updateSection(v.text.toString())
@@ -104,13 +89,28 @@ class MainActivity : AppCompatActivity(), OnDeleteModeListener, OnPhotoClickList
 
     override fun onBackPressed() {
         if (adapter.isDeleteMode) {
-            deleteButton?.visibility = View.GONE
-            binding.galleryCard.recyclerView.adapter = adapter.apply { isDeleteMode = false }
+            deleteModeOff()
         } else super.onBackPressed()
     }
 
     override fun onDeleteMode(isDeleteMode: Boolean) {
-        setDeleteMode(isDeleteMode)
+        if (isDeleteMode && deleteButton == null) {
+            deleteButton = binding.galleryCard.deleteButton
+            deleteButton?.apply {
+                visibility = View.VISIBLE
+                translationZ = 30F
+                setOnClickListener {
+                    deleteModeOff()
+                    model.deletePhotos(adapter.deleteList)
+
+                }
+            }
+        } else deleteButton?.visibility = View.VISIBLE
+    }
+
+    private fun deleteModeOff() {
+        deleteButton?.visibility = View.GONE
+        adapter.isDeleteMode = false
     }
 
     override fun onPhotoClick(uri: Uri) {

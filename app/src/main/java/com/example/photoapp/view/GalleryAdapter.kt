@@ -29,12 +29,20 @@ class GalleryAdapter(var list: ArrayList<GalleryItem>, private val deleteModeLis
     set(value) {
         if(value) {
             deleteList.clear()
+            mode = value
+            notifyDataSetChanged()
+        } else {
+            mode = value
             notifyDataSetChanged()
         }
         field = value
     }
     private val deleteIconOff = getDrawable(App.context(), R.drawable.photo_delete_off)
     private val deleteIconOn = getDrawable(App.context(), R.drawable.photo_delete_on)
+
+    companion object {
+        var mode = false
+    }
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -49,22 +57,27 @@ class GalleryAdapter(var list: ArrayList<GalleryItem>, private val deleteModeLis
 
                 override fun onClick() {
                     if (isDeleteMode) {
-                        val model = list[bindingAdapterPosition]
-                        val isSelected = deleteList.contains(model)
+                        val item = list[bindingAdapterPosition]
+                        val isSelected = deleteList.contains(item)
                         val toSelect = !isSelected
                         setDeleteIcon(binding.deleteIcon, toSelect)
-                        if(toSelect) deleteList.add(model) else deleteList.remove(model)
+                        if(toSelect) deleteList.add(item) else deleteList.remove(item)
                     } else
                         onPhotoClickListener.onPhotoClick(Uri.parse(list[bindingAdapterPosition].photoUri))
                 }
             }
-            binding.photo.setOnTouchListener(ItemTouchListener(listener, isDeleteMode))
+            binding.photo.setOnTouchListener(ItemTouchListener(listener))
         }
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         Glide.with(App.context()).load(Uri.parse(list[position].photoUri)).centerCrop().into(holder.binding.photo)
-        if (!isDeleteMode) holder.binding.deleteIcon.visibility = View.INVISIBLE else holder.binding.deleteIcon.visibility = View.VISIBLE
+        if (!isDeleteMode) {
+            holder.binding.deleteIcon.visibility = View.INVISIBLE
+        } else {
+            setDeleteIcon(holder.binding.deleteIcon, !isDeleteMode)
+            holder.binding.deleteIcon.visibility = View.VISIBLE
+        }
     }
 
     override fun getItemCount() = list.size

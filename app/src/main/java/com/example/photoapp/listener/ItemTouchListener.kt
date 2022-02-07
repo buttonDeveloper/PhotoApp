@@ -7,16 +7,12 @@ import android.view.View
 import timber.log.Timber
 import android.os.Handler
 import com.example.photoapp.App
+import com.example.photoapp.view.GalleryAdapter
 
-class ItemTouchListener(private val callback: TouchCallback, private val isDeleteMode: Boolean) : View.OnTouchListener {
-
-    init {
-        Timber.d("ItemTouchListener isDeleteMode = $isDeleteMode")
-    }
+class ItemTouchListener(private val callback: TouchCallback) : View.OnTouchListener {
 
     private val handler = Handler(Looper.getMainLooper())
     private val runnable = Runnable {
-        Timber.d("Runnable")
         callback.onLongClick()
         vibrate()
     }
@@ -24,8 +20,8 @@ class ItemTouchListener(private val callback: TouchCallback, private val isDelet
     override fun onTouch(view: View?, event: MotionEvent?): Boolean {
         when (event?.action) {
             MotionEvent.ACTION_DOWN -> {
-                Timber.d("DOWN. isDeleteMode: $isDeleteMode")
-                return if (isDeleteMode) {
+                Timber.d("DOWN. isDeleteMode: ${GalleryAdapter.mode }")
+                return if (GalleryAdapter.mode ) {
                     true
                 }else {
                     //checking 3sec press down
@@ -34,8 +30,8 @@ class ItemTouchListener(private val callback: TouchCallback, private val isDelet
                 }
             }
             MotionEvent.ACTION_UP -> {
-                Timber.d("UP. isDeleteMode: $isDeleteMode")
-                return if (isDeleteMode) {
+                Timber.d("UP. isDeleteMode: ${GalleryAdapter.mode }")
+                return if (GalleryAdapter.mode) {
                     performClick()
                     true
                 }
@@ -46,8 +42,8 @@ class ItemTouchListener(private val callback: TouchCallback, private val isDelet
                 }
             }
             MotionEvent.ACTION_CANCEL -> {
-                Timber.d("CANCEL. isDeleteMode: $isDeleteMode")
-                if (!isDeleteMode) handler.removeCallbacks(runnable)
+                Timber.d("CANCEL. isDeleteMode: ${GalleryAdapter.mode }")
+                if (!GalleryAdapter.mode) handler.removeCallbacks(runnable)
                 return true
             }
         }
@@ -55,7 +51,6 @@ class ItemTouchListener(private val callback: TouchCallback, private val isDelet
     }
 
     private fun performClick() {
-        Timber.d("performClick")
         callback.onClick()
     }
 
